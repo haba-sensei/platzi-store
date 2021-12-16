@@ -1,0 +1,51 @@
+
+os: windows
+
+git: 
+  depth: 3
+
+branches:
+  except:
+    - legacy
+    - experimental
+  only:
+    - master
+    - stable
+
+before_install:
+  - python
+
+install: 
+  - yarn install
+
+script:
+  - yarn deploy
+  - yarn test
+
+before_script: 
+  - yarn test
+
+after_script: 
+  - yarn clean
+
+cache: 
+  directories:
+    - node_modules
+
+jobs: 
+  include:
+    - stage: test
+      script:
+        - yarn test
+        - yarn eslint
+    - stage: deploy
+      script: 
+        - yarn deploy
+
+deploy:
+  api_key:
+    secure: "YOUR ENCRYPTED API KEY"
+  provider: heroku
+  app: socidem
+  on: 
+    repo: haba-sensei/socidem
